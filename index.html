@@ -76,7 +76,12 @@
         <div id="qr-box" class="qr-box">
           <!-- Рекламный баннер: показывается пока QR не сгенерирован -->
           <div id="qr-ad" class="qr-ad">
-            <iframe src="//ptpss.online/serve/show.php?a=1200&b=300x250" width="300" height="250" frameBorder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe>
+            <!--[ 300x250 Ad Tag ( qrgen2.vercel.app ) - Adz2You // adz2you.xyz // ]-->
+            <div style="z-index:99999;position:fixed;bottom:10px;right:10px">
+            <a style="position:absolute;top:-30px;left:-30px" href="#" onclick="this.parentNode.style.display='none';"><img src="https://adz2you.xyz/imges/X.png" width="30" height="30" title="Close" /></a>
+            <iframe src="//ptpss.online/serve/show.php?a=1202&b=300x250" width="300" height="250" frameBorder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe>
+            </div>
+            <!--[ End of the Ad Tag - Adz2You // adz2you.xyz // ]-->
           </div>
           <!-- Сюда вставляется canvas с QR -->
           <div id="qr-canvas-wrap" class="qr-canvas-wrap" style="display:none"></div>
