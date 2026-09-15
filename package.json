@@ -1,0 +1,10 @@
+{
+  "name": "qrgen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QRGen — генератор QR-кодов из ссылки или текста",
+  "scripts": {
+    "start": "python server.py",
+    "serve": "python -m http.server 9000"
+  }
+}

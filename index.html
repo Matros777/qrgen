@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Generator — генератор QR-кодов</title>
+  <meta name="description" content="Бесплатный генератор QR-кодов из ссылки или текста. Мгновенно, без регистрации." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ВЕРХНИЙ ХЕДЕР (sticky) + элегантная полоска -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="#top" aria-label="QRGen">
+        <span class="logo-mark">▚</span>
+        <span class="logo-text">QR<span class="accent">Gen</span></span>
+      </a>
+    </div>
+    <!-- Элегантная градиентная полоска со свечением -->
+    <div class="header-line" aria-hidden="true"></div>
+  </header>
+
+  <div class="app" id="top">
+    <main class="generator">
+      <header class="hero">
+        <div class="logo">
+          <span class="logo-mark">▚</span>
+          <span class="logo-text">QR<span class="accent">Gen</span></span>
+        </div>
+        <h1>Генератор QR-кодов</h1>
+        <p class="subtitle">Вставь ссылку или текст — получи QR мгновенно. Без регистрации.</p>
+      </header>
+
+      <section class="card">
+        <label class="field-label" for="qr-input">Ссылка или текст</label>
+        <textarea id="qr-input" class="input" rows="3" placeholder="https://example.com или любой текст..."></textarea>
+
+        <div class="options">
+          <div class="opt">
+            <label for="qr-size">Размер</label>
+            <select id="qr-size">
+              <option value="256">256 px</option>
+              <option value="320" selected>320 px</option>
+              <option value="420">420 px</option>
+              <option value="512">512 px</option>
+            </select>
+          </div>
+          <div class="opt">
+            <label for="qr-ec">Коррекция ошибок</label>
+            <select id="qr-ec">
+              <option value="L">L — 7%</option>
+              <option value="M" selected>M — 15%</option>
+              <option value="Q">Q — 25%</option>
+              <option value="H">H — 30%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="gen-btn" class="btn btn-primary" type="button">Сгенерировать QR</button>
+          <button id="dl-btn" class="btn btn-ghost" type="button" disabled>Скачать PNG</button>
+        </div>
+
+        <p id="hint" class="hint">Введи данные и нажми «Сгенерировать QR».</p>
+      </section>
+
+      <section class="result">
+        <div id="qr-box" class="qr-box">
+          <!-- Рекламный баннер: показывается пока QR не сгенерирован -->
+          <div id="qr-ad" class="qr-ad">
+            <iframe src="//ptpss.online/serve/show.php?a=1200&b=300x250" width="300" height="250" frameBorder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe>
+          </div>
+          <!-- Сюда вставляется canvas с QR -->
+          <div id="qr-canvas-wrap" class="qr-canvas-wrap" style="display:none"></div>
+        </div>
+        <div class="result-meta">
+          <div class="meta-row"><span class="meta-k">Тип:</span><span id="meta-type" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">Содержимое:</span><span id="meta-content" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">Размер:</span><span id="meta-size" class="meta-v">—</span></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo">
+            <span class="logo-mark">▚</span>
+            <span class="logo-text">QR<span class="accent">Gen</span></span>
+          </div>
+          <p class="footer-tagline">Быстрый генератор QR-кодов из ссылки или текста. Работает офлайн, без регистрации.</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> QRGen. Все права защищены.</span>
+        <span class="footer-made">Сделано с ❤️ для удобства</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
