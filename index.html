@@ -28,6 +28,70 @@
   <meta name="twitter:description" content="Бесплатный генератор QR-кодов из ссылки или текста. Мгновенно, без регистрации." />
   <meta name="twitter:image" content="https://qrgen-five-mauve.vercel.app/apple-touch-icon.png" />
 
+  <!-- Микроразметка: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "QRGen — генератор QR-кодов",
+    "url": "https://qrgen-five-mauve.vercel.app/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "description": "Бесплатный генератор QR-кодов из ссылки или текста. Прозрачный фон, выбор цветов, скачивание PNG.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+
+  <!-- Микроразметка: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Как сделать QR-код с прозрачным фоном?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Вставьте ссылку или текст, оставьте включённой опцию «Прозрачный фон» (она включена по умолчанию) и нажмите «Сгенерировать QR». Скачанный PNG будет с прозрачным фоном."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как изменить цвет QR-кода?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Выберите любой цвет в поле «Цвет кода». Фон кода настраивается отдельно: цветом заливки или прозрачным."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "QR-код с прозрачным фоном сканируется так же хорошо?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да, прозрачность не влияет на считывание. Главное — достаточный контраст кода и подложки, на которую вы его кладёте."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Можно ли скачать QR-код в PNG бесплатно?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да, генерация и скачивание PNG полностью бесплатны, без регистрации и ограничений."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как сделать картинку с QR-кодом для соцсетей?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Откройте раздел «Пост с QR»: загрузите изображение, добавьте QR-код и подпись. Доступны форматы 16:9, 9:16 и 1:1."
+        }
+      }
+    ]
+  }
+  </script>
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -120,15 +184,8 @@
 
       <section class="result">
         <div id="qr-box" class="qr-box">
-          <!-- Рекламный баннер: показывается пока QR не сгенерирован -->
-          <div id="qr-ad" class="qr-ad">
-            <!--[ 300x250 Ad Tag ( qrgen-five-mauve.vercel.app ) - Adz2You // adz2you.xyz // ]-->
-            <div style="z-index:99999;position:fixed;bottom:10px;right:10px">
-            <a style="position:absolute;top:-30px;left:-30px" href="#" onclick="this.parentNode.style.display='none';"><img src="https://adz2you.xyz/imges/X.png" width="30" height="30" title="Close" alt="Закрыть рекламу" /></a>
-            <iframe src="//ptpss.online/serve/show.php?a=1203&b=300x250" width="300" height="250" frameBorder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe>
-            </div>
-            <!--[ End of the Ad Tag - Adz2You // adz2you.xyz // ]-->
-          </div>
+          <!-- Рекламный баннер: наполняется JS ПОСЛЕ window.onload, чтобы не блокировать рендер -->
+          <div id="qr-ad" class="qr-ad"></div>
           <!-- Сюда вставляется canvas с QR -->
           <div id="qr-canvas-wrap" class="qr-canvas-wrap" style="display:none"></div>
         </div>
@@ -144,10 +201,36 @@
     <section class="seo-block">
       <h2>Как создать QR-код: 3 простых шага</h2>
       <ol class="seo-steps">
-        <li><strong>Вставь ссылку или текст</strong> в поле выше — например, адрес сайта, Wi-Fi пароль или любой текст.</li>
-        <li><strong>Настрой внешний вид:</strong> размер, уровень коррекции ошибок, цвет кода и фона. По умолчанию фон прозрачный — код легко встанет на любой дизайн.</li>
-        <li><strong>Сгенерируй и скачай PNG</strong> — готовый QR-код в высоком качестве, без регистрации и бесплатно.</li>
+        <li><strong>Вставьте ссылку или текст</strong> в поле выше — например, адрес сайта, Wi-Fi пароль или любой текст.</li>
+        <li><strong>Настройте внешний вид:</strong> размер, уровень коррекции ошибок, цвет кода и фона. По умолчанию фон прозрачный — код легко встанет на любой дизайн.</li>
+        <li><strong>Сгенерируйте и скачайте PNG</strong> — готовый QR-код в высоком качестве, без регистрации и бесплатно.</li>
       </ol>
+      <p class="seo-more">Нужна картинка с QR-кодом, подписью и подложкой для соцсетей? Сделайте её в разделе <a href="/post">«Пост с QR»</a> — форматы 16:9, 9:16 и 1:1.</p>
+    </section>
+
+    <!-- FAQ-блок: длинный хвост запросов -->
+    <section class="seo-block faq">
+      <h2>Частые вопросы о QR-кодах</h2>
+      <details class="faq-item">
+        <summary>Как сделать QR-код с прозрачным фоном?</summary>
+        <p>Вставьте ссылку или текст, оставьте включённой опцию «Прозрачный фон» (она включена по умолчанию) и нажмите «Сгенерировать QR». Скачанный PNG будет с прозрачным фоном — его можно положить на любой дизайн.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Как изменить цвет QR-кода?</summary>
+        <p>Выберите любой цвет в поле «Цвет кода». Фон кода настраивается отдельно: цветной заливкой или прозрачным.</p>
+      </details>
+      <details class="faq-item">
+        <summary>QR-код с прозрачным фоном сканируется так же хорошо?</summary>
+        <p>Да, прозрачность не влияет на считывание. Главное — достаточный контраст между кодом и подложкой, на которую вы его кладёте.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Можно ли скачать QR-код в PNG бесплатно?</summary>
+        <p>Да, генерация и скачивание PNG полностью бесплатны, без регистрации и без ограничений.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Как сделать картинку с QR-кодом для соцсетей?</summary>
+        <p>Откройте раздел <a href="/post">«Пост с QR»</a>: загрузите изображение, добавьте QR-код и подпись. Доступны форматы 16:9, 9:16 и 1:1.</p>
+      </details>
     </section>
 
     <!-- ФУТЕР -->

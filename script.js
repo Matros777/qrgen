@@ -175,6 +175,42 @@
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  /* ===== Реклама: грузим ПОСЛЕ window.onload + lazy, чтобы не блокировать рендер ===== */
+  function initAd() {
+    const ad = $('qr-ad');
+    if (!ad || ad.querySelector('iframe')) return;
+
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'z-index:99999;position:fixed;bottom:10px;right:10px';
+
+    const close = document.createElement('a');
+    close.href = '#';
+    close.style.cssText = 'position:absolute;top:-30px;left:-30px';
+    close.addEventListener('click', (e) => { e.preventDefault(); wrap.style.display = 'none'; });
+
+    const img = document.createElement('img');
+    img.src = 'https://adz2you.xyz/imges/X.png';
+    img.width = 30; img.height = 30;
+    img.title = 'Close';
+    img.alt = 'Закрыть рекламу';
+    close.appendChild(img);
+
+    const iframe = document.createElement('iframe');
+    iframe.src = '//ptpss.online/serve/show.php?a=1203&b=300x250';
+    iframe.width = 300; iframe.height = 250;
+    iframe.frameBorder = 0; iframe.scrolling = 'no';
+    iframe.marginWidth = 0; iframe.marginHeight = 0;
+    iframe.loading = 'lazy';
+    iframe.title = 'Реклама';
+
+    wrap.appendChild(close);
+    wrap.appendChild(iframe);
+    ad.appendChild(wrap);
+  }
+
+  // Запускаем после полной загрузки страницы (рендер уже не блокируется)
+  window.addEventListener('load', () => setTimeout(initAd, 200));
+
   // Старт: показываем рекламу
   showAd();
   setHint('Введи данные и нажми «Сгенерировать QR» (или Ctrl+Enter).');
