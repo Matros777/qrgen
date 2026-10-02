@@ -188,8 +188,20 @@
     });
   }
 
-  // ---------- Сборка картинки ----------
+  /* Обёртка: любая ошибка показывается пользователю, а не ломает страницу молча */
   async function render() {
+    try {
+      await renderInner();
+    } catch (e) {
+      makeBtn.disabled = false;
+      dlBtn.disabled = false;
+      setHint('Ошибка сборки: ' + (e && e.message ? e.message : e), 'error');
+      console.error('[QRGen] render error:', e);
+    }
+  }
+
+  // ---------- Сборка картинки ----------
+  async function renderInner() {
     if (!sourceImage) {
       placeholder.style.display = '';
       dlBtn.disabled = true;
@@ -201,6 +213,17 @@
     }
 
 const fmt = FORMATS[currentFormat];
+
+    // Печатный размер задаёт ширину холста: 4 см → 472 px при 300 dpi
+    const psKey = printSel.value;
+    const outW  = psKey === 'origin' ? fmt.w : cmToPx(PRINT_SIZES[psKey].cm);
+
+    // Множитель размера текста: ×1 (по умолчанию), ×1.5, ×2, ×3
+    const textScale = parseFloat(textScaleSel.value) || 1;
+
+    const natW = sourceImage.naturalWidth  || 1;
+    const natH = sourceImage.naturalHeight || 1;
+
     const W = outW;
     const H = Math.round(fmt.h * (outW / fmt.w));
     const ctx = canvas.getContext('2d');
@@ -217,17 +240,6 @@ const fmt = FORMATS[currentFormat];
     // Отключаем кнопку на время сборки
     makeBtn.disabled = true;
     dlBtn.disabled = true;
-
-    const natW = sourceImage.naturalWidth  || 1;
-    const natH = sourceImage.naturalHeight || 1;
-
-    // Множитель размера текста: ×1 (по умолчанию), ×1.5, ×2, ×3
-    const textScale = parseFloat(textScaleSel.value) || 1;
-
-    // Печатный размер задаёт ширину холста: 4 см → 472 px при 300 dpi
-    const fmtP  = FORMATS[currentFormat];
-    const psKey = printSel.value;
-    const outW  = psKey === 'origin' ? fmtP.w : cmToPx(PRINT_SIZES[psKey].cm);
 
     /* ================================================================
        РЕЖИМ «БЕЗ ПОЛЕЙ»
