@@ -113,6 +113,8 @@ body {
 }
 .header-nav a:hover { color: var(--text); }
 .header-nav a:hover::after { transform: scaleX(1); }
+.header-nav a.nav-link-active { color: var(--text); }
+.header-nav a.nav-link-active::after { transform: scaleX(1); }
 
 .header-cta {
   flex: 0 0 auto;
@@ -456,4 +458,163 @@ h1 { font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.5p
 @media (max-width: 560px) {
   .footer-top { grid-template-columns: 1fr; gap: 20px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; text-align: left; }
+}
+
+/* ============================================================
+   СТРАНИЦА «ПОСТ С QR» (/post)
+   ============================================================ */
+
+/* Меню на мобильных не сжимаем в ноль */
+@media (max-width: 420px) {
+  .header-inner { gap: 12px; }
+  .header-nav { gap: 14px; }
+  .header-nav a { font-size: 13px; }
+  .logo-text { font-size: 19px; }
+  .logo-mark { width: 30px; height: 30px; font-size: 16px; }
+}
+
+/* ---------- Зона загрузки изображения ---------- */
+.drop {
+  position: relative;
+  border: 1.5px dashed rgba(255,255,255,0.18);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.22);
+  padding: 26px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, transform .12s;
+}
+.drop:hover { border-color: rgba(79,140,255,0.6); background: rgba(79,140,255,0.06); }
+.drop.is-drag {
+  border-color: var(--accent);
+  background: rgba(79,140,255,0.13);
+  transform: scale(1.005);
+}
+.drop.has-image { padding: 14px; }
+
+.drop-icon {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--accent-2);
+  margin-bottom: 10px;
+}
+.drop.has-image .drop-icon,
+.drop.has-image .drop-text,
+.drop.has-image .drop-hint { display: none; }
+
+.drop-text { font-size: 15px; color: var(--text); font-weight: 600; }
+.drop-hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.link-btn:hover { color: var(--accent-2); }
+
+.drop-preview {
+  display: none;
+  width: 100%;
+  max-height: 190px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-top: 2px;
+}
+
+/* ---------- Поля поменьше / цвет ---------- */
+.input-sm {
+  min-height: 0;
+  height: 44px;
+  padding: 11px 13px;
+  font-size: 14px;
+}
+.input-color {
+  min-height: 0;
+  height: 44px;
+  padding: 5px;
+  cursor: pointer;
+}
+.input-color::-webkit-color-swatch-wrapper { padding: 0; }
+.input-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 8px;
+}
+
+/* ---------- Переключатель формата 16:9 / 9:16 / 1:1 ---------- */
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.seg {
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 8px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: border-color .18s, background .18s, box-shadow .18s, transform .12s;
+}
+.seg:hover { border-color: rgba(79,140,255,0.55); background: rgba(79,140,255,0.08); }
+.seg:active { transform: translateY(1px); }
+.seg .seg-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+.seg.is-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #04101f;
+  box-shadow: 0 10px 26px rgba(79,140,255,0.32);
+}
+.seg.is-active .seg-sub { color: rgba(4,16,31,0.72); }
+
+/* ---------- Превью собранной картинки ---------- */
+.result-post { grid-template-columns: minmax(0, 420px) 1fr; }
+
+.preview-box {
+  width: 100%;
+  min-height: 260px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.30);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.preview-box canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 520px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.preview-ph {
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 18px;
+}
+
+@media (max-width: 760px) {
+  .result-post { grid-template-columns: 1fr; }
+  .segmented { grid-template-columns: 1fr; }
 }

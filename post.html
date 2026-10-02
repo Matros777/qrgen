@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пост с QR-кодом — генератор картинок 16:9, 9:16, 1:1</title>
+  <meta name="description" content="Собери картинку: изображение, QR-код под ним и подпись внизу. Форматы 16:9, 9:16 и 1:1. Скачивание в PNG." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ВЕРХНИЙ ХЕДЕР (sticky) + элегантная полоска -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="QRGen">
+        <span class="logo-mark">▚</span>
+        <span class="logo-text">QR<span class="accent">Gen</span></span>
+      </a>
+      <nav class="header-nav">
+        <a href="/">QR-код</a>
+        <a href="/post" class="nav-link-active">Пост с QR</a>
+      </nav>
+    </div>
+    <div class="header-line" aria-hidden="true"></div>
+  </header>
+
+  <div class="app" id="top">
+    <main class="generator">
+      <header class="hero">
+        <h1>Картинка + QR-код</h1>
+        <p class="subtitle">Изображение сверху, QR-код строго под ним и подпись внизу. Форматы 16:9, 9:16 и 1:1. Скачивание в PNG.</p>
+      </header>
+
+      <section class="card">
+        <label class="field-label" for="img-file">Изображение</label>
+
+        <!-- Зона загрузки / drag & drop -->
+        <div id="drop" class="drop">
+          <input type="file" id="img-file" accept="image/*" hidden />
+          <div class="drop-icon">▣</div>
+          <div class="drop-text">Перетащи картинку сюда или <button type="button" id="pick-btn" class="link-btn">выбери файл</button></div>
+          <div class="drop-hint">JPG, PNG, WEBP, GIF — до 15 МБ</div>
+          <img id="drop-preview" class="drop-preview" alt="" />
+        </div>
+
+        <div class="options">
+          <div class="opt">
+            <label for="post-url">Или ссылка на картинку</label>
+            <input type="url" id="post-url" class="input input-sm" placeholder="https://.../photo.jpg" />
+          </div>
+          <div class="opt">
+            <label for="qr-value">Что зашить в QR-код</label>
+            <input type="text" id="qr-value" class="input input-sm" placeholder="https://x402-ai-agent.space/" />
+          </div>
+        </div>
+
+        <div class="field-label" style="margin-top:18px">Формат картинки</div>
+        <div class="segmented" id="format-group" role="group" aria-label="Формат">
+          <button type="button" class="seg" data-fmt="16:9">16:9 <span class="seg-sub">1280×720</span></button>
+          <button type="button" class="seg" data-fmt="9:16">9:16 <span class="seg-sub">1080×1920</span></button>
+          <button type="button" class="seg is-active" data-fmt="1:1">1:1 <span class="seg-sub">1080×1080</span></button>
+        </div>
+
+        <div class="options">
+          <div class="opt">
+            <label for="fit">Вписать изображение</label>
+            <select id="fit">
+              <option value="contain" selected>Целиком (с полями)</option>
+              <option value="cover">Заполнить (обрезать)</option>
+            </select>
+          </div>
+          <div class="opt">
+            <label for="align">Выравнивание подписи</label>
+            <select id="align">
+              <option value="center" selected>По центру</option>
+              <option value="left">По левому краю</option>
+              <option value="right">По правому краю</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="options">
+          <div class="opt">
+            <label for="bg">Цвет фона</label>
+            <input type="color" id="bg" class="input input-color" value="#0b0f17" />
+          </div>
+          <div class="opt">
+            <label for="fg">Цвет подписи</label>
+            <input type="color" id="fg" class="input input-color" value="#e8edf7" />
+          </div>
+          <div class="opt">
+            <label for="qr-dark">QR — тёмный</label>
+            <input type="color" id="qr-dark" class="input input-color" value="#000000" />
+          </div>
+          <div class="opt">
+            <label for="qr-light">QR — светлый</label>
+            <input type="color" id="qr-light" class="input input-color" value="#ffffff" />
+          </div>
+        </div>
+
+        <label class="field-label" for="caption" style="margin-top:18px">Текст под QR-кодом</label>
+        <textarea id="caption" class="input" rows="3" placeholder="Например: x402 — платежи для ИИ-агентов. USDC в один вызов."></textarea>
+
+        <div class="actions">
+          <button id="make-btn" class="btn btn-primary" type="button">Собрать картинку</button>
+          <button id="dl-btn" class="btn btn-ghost" type="button" disabled>Скачать PNG</button>
+        </div>
+
+        <p id="hint" class="hint">Загрузи картинку — и нажми «Собрать картинку».</p>
+      </section>
+
+      <section class="result result-post">
+        <div class="preview-box">
+          <canvas id="canvas" width="1080" height="1080"></canvas>
+          <div id="placeholder" class="preview-ph">Здесь появится твоя картинка</div>
+        </div>
+        <div class="result-meta">
+          <div class="meta-row"><span class="meta-k">Формат:</span><span id="meta-format" class="meta-v">1:1 · 1080 × 1080</span></div>
+          <div class="meta-row"><span class="meta-k">Компоновка:</span><span id="meta-layout" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">QR содержит:</span><span id="meta-qr" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">Подпись:</span><span id="meta-caption" class="meta-v">—</span></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="logo">
+            <span class="logo-mark">▚</span>
+            <span class="logo-text">QR<span class="accent">Gen</span></span>
+          </div>
+          <p class="footer-tagline">Быстрый генератор QR-кодов из ссылки или текста. Работает офлайн, без регистрации.</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> QRGen. Все права защищены.</span>
+        <span class="footer-made">Сделано с ❤️ для удобства</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="qrcode.min.js"></script>
+  <script src="post.js"></script>
+</body>
+</html>
