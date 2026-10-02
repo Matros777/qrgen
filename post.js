@@ -13,6 +13,10 @@
   const qrValue    = $('qr-value');
   const caption    = $('caption');
   const fitSel     = $('fit');
+  const textPos   = $('text-pos');
+  const textScaleSel = $('text-scale');
+  const printSel    = $('print-size');
+  const metaPrint   = $('meta-print');
   const alignSel   = $('align');
   const bgInput    = $('bg');
   const fgInput    = $('fg');
@@ -26,6 +30,7 @@
   const canvas     = $('canvas');
   const placeholder = $('placeholder');
   const metaFormat = $('meta-format');
+  const metaOrig   = $('meta-orig');
   const metaLayout = $('meta-layout');
   const metaQr     = $('meta-qr');
   const metaCap    = $('meta-caption');
@@ -37,6 +42,27 @@
     '1:1':  { w: 1080, h: 1080 }
   };
   let currentFormat = '1:1';
+
+  /* ---------- Печатные размеры ----------
+     Ширина в сантиметрах → пиксели при 300 dpi (стандартная плотность печати).
+     1 см = 300/2.54 ≈ 118.11 px                                                        */
+  const DPI = 300;
+  const cmToPx = (cm) => Math.round(cm * DPI / 2.54);
+
+  const PRINT_SIZES = {
+    small:  { cm: 4,  label: 'Мелкий — 4 см' },
+    medium: { cm: 10, label: 'Средний — 10 см' },
+    large:  { cm: 20, label: 'Крупный — 20 см' }
+  };
+
+  /** Подсказка о печати: сколько сантиметров и сколько пикселей */
+  function printInfo(widthPx, heightPx) {
+    const ps = PRINT_SIZES[printSel.value];
+    if (!ps) return 'По формату · ' + widthPx + ' × ' + heightPx + ' px';
+    const wCm = (widthPx * 2.54 / DPI).toFixed(1);
+    const hCm = (heightPx * 2.54 / DPI).toFixed(1);
+    return wCm + ' × ' + hCm + ' см · ' + widthPx + ' × ' + heightPx + ' px @300dpi';
+  }
 
   // ---------- Состояние ----------
   let sourceImage = null;   // HTMLImageElement с загруженной картинкой
@@ -174,9 +200,9 @@
       return;
     }
 
-    const fmt = FORMATS[currentFormat];
-    const W = fmt.w, H = fmt.h;
-    const unit = Math.min(W, H);
+const fmt = FORMATS[currentFormat];
+    const W = outW;
+    const H = Math.round(fmt.h * (outW / fmt.w));
     const ctx = canvas.getContext('2d');
 
     const value = qrValue.value.trim();
@@ -195,6 +221,14 @@
     const natW = sourceImage.naturalWidth  || 1;
     const natH = sourceImage.naturalHeight || 1;
 
+    // Множитель размера текста: ×1 (по умолчанию), ×1.5, ×2, ×3
+    const textScale = parseFloat(textScaleSel.value) || 1;
+
+    // Печатный размер задаёт ширину холста: 4 см → 472 px при 300 dpi
+    const fmtP  = FORMATS[currentFormat];
+    const psKey = printSel.value;
+    const outW  = psKey === 'origin' ? fmtP.w : cmToPx(PRINT_SIZES[psKey].cm);
+
     /* ================================================================
        РЕЖИМ «БЕЗ ПОЛЕЙ»
        Картинка — во всю ширину холста, пропорции сохраняются.
@@ -203,7 +237,7 @@
        Высота холста считается автоматически.
        ================================================================ */
     if (fit === 'full') {
-      const W        = fmt.w;                     // фиксированная ширина холста
+      const W        = outW;                    // ширина холста = печатный размер
       const imgH     = Math.round(W * (natH / natW)); // высота картинки по её пропорциям
       const qrSize   = W;                         // QR — квадрат во всю ширину
       const gap1     = Math.round(W * 0.015);     // картинка → QR
@@ -212,7 +246,7 @@
       const botPad   = capText ? 0 : Math.round(W * 0.02);
       const maxTextW = W - sidePad * 2;
 
-      let fontSize = Math.round(W * 0.038);
+      let fontSize = Math.round(W * 0.038 * textScale);
       let lines = [], lineH = 0, textH = 0;
 
       // Подгоняем шрифт, чтобы картинка не уехала за разумный предел
@@ -238,8 +272,9 @@
       // Картинка — во всю ширину, без полей, пропорции сохранены
       ctx.drawImage(sourceImage, 0, 0, W, imgH);
 
-      // QR — квадрат во всю ширину, строго под картинкой
-      const qrY = imgH + gap1;
+      // QR — квадрат во всю ширину; если текст сверху — QR сдвинется под него
+      const textAbove = capText && textPos.value === 'above';
+      const qrY = imgH + gap1 + (textAbove ? textH + gap2 : 0);
       try {
         const qrCanvas = await renderQr(value || ' ', qrSize, dark, light);
         ctx.drawImage(qrCanvas, 0, qrY, qrSize, qrSize);
@@ -249,9 +284,9 @@
         return;
       }
 
-      // Текст — под QR
+      // Текст — под QR или над ним (между картинкой и кодом)
       if (capText) {
-        const textTop = qrY + qrSize + gap2;
+        const textTop = textAbove ? (imgH + gap1) : (qrY + qrSize + gap2);
         ctx.fillStyle  = fg;
         ctx.textBaseline = 'top';
         ctx.textAlign  = align;
@@ -266,9 +301,13 @@
       canvas.style.display = '';
 
       metaFormat.textContent = currentFormat + ' · ' + W + ' × ' + totalH + ' px (без полей)';
+metaOrig.textContent   = natW + ' × ' + natH + ' px';
+      metaPrint.textContent  = printInfo(W, totalH);
       metaLayout.textContent = 'Картинка ' + W + '×' + imgH + ' (пропорции сохранены)' +
                                ' · QR ' + qrSize + '×' + qrSize +
-                               (lines.length ? ' · ' + lines.length + ' стр. подписи' : ' · без подписи');
+                               (lines.length ? ' · ' + lines.length + ' стр. подписи ' + fontSize + 'px' +
+                                            (textScale !== 1 ? ' (×' + textScale + ')' : '')
+                                          : ' · без подписи');
       metaQr.textContent  = value || '—';
       metaCap.textContent = capText || '—';
 
@@ -290,7 +329,7 @@
 
     // Подбираем размер шрифта так, чтобы всё влезло
     const maxTextW = W - pad * 2;
-    let fontSize = Math.round(unit * 0.042);
+    let fontSize = Math.round(unit * 0.042 * textScale);
     let lines = [];
     let textH = 0;
     let imgH = 0;
@@ -357,9 +396,10 @@
       ctx.restore();
     }
 
-    // QR-код (строго под изображением)
+    // QR-код: либо сразу под изображением, либо под текстом
+    const textAbove = capText && textPos.value === 'above';
     const qrX = Math.round((W - qrBox) / 2);
-    const qrY = imgY + imgHReal + gap1;
+    const qrY = imgY + imgHReal + gap1 + (textAbove ? textH + gap2 : 0);
 
     try {
       const qrCanvas = await renderQr(value || ' ', qrSize, dark, light);
@@ -370,10 +410,10 @@
       return;
     }
 
-    // Текст (под QR-кодом)
+    // Текст: под QR-кодом или над ним (между картинкой и кодом)
     if (capText) {
       const lineH = Math.round(fontSize * 1.32);
-      const textTop = qrY + qrBox + gap2;
+      const textTop = textAbove ? (imgY + imgHReal + gap1) : (qrY + qrBox + gap2);
       ctx.fillStyle = fg;
       ctx.textBaseline = 'top';
       ctx.textAlign = align;
@@ -390,10 +430,14 @@
 
     // Метаданные
     metaFormat.textContent = currentFormat + ' · ' + W + ' × ' + H + ' px';
+metaOrig.textContent   = natW + ' × ' + natH + ' px';
+    metaPrint.textContent  = printInfo(W, H);
     metaLayout.textContent = 'Картинка ' + Math.round(imgW) + '×' + Math.round(imgHReal) +
                             ' · QR ' + qrSize + ' px' +
                             (padOn.checked ? ' · подложка ' + padColor.value : '') +
-                            (lines.length ? ' · ' + lines.length + ' стр. подписи' : ' · без подписи');
+                            (lines.length ? ' · ' + lines.length + ' стр. подписи ' + fontSize + 'px' +
+                                           (textScale !== 1 ? ' (×' + textScale + ')' : '')
+                                         : ' · без подписи');
     metaQr.textContent = value || '—';
     metaCap.textContent = capText || '—';
 
@@ -415,7 +459,10 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'qr-post-' + currentFormat.replace(':', 'x') + '-' + Date.now() + '.png';
+      // В имя файла — формат, оригинальный размер картинки и итог холста
+      const orig = sourceImage ? (sourceImage.naturalWidth + 'x' + sourceImage.naturalHeight) : 'img';
+      const out  = currentFormat.replace(':', 'x') + '-' + orig + '-' + canvas.width + 'x' + canvas.height;
+      a.download = 'qr-post-' + out + '-' + Date.now() + '.png';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -467,7 +514,7 @@
     el._t = setTimeout(() => { if (sourceImage) render(); }, 350);
   }));
 
-  [fitSel, alignSel, bgInput, fgInput, qrDark, qrLight, padColor].forEach((el) => {
+  [fitSel, alignSel, textPos, textScaleSel, printSel, bgInput, fgInput, qrDark, qrLight, padColor].forEach((el) => {
     el.addEventListener('input', () => { if (sourceImage) render(); });
     el.addEventListener('change', () => { if (sourceImage) render(); });
   });

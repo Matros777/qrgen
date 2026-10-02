@@ -78,11 +78,39 @@
             </select>
           </div>
           <div class="opt">
+            <label for="text-pos">Текст подписи</label>
+            <select id="text-pos">
+              <option value="below" selected>Под QR-кодом</option>
+              <option value="above">Над QR-кодом</option>
+            </select>
+          </div>
+          <div class="opt">
             <label for="align">Выравнивание подписи</label>
             <select id="align">
               <option value="center" selected>По центру</option>
               <option value="left">По левому краю</option>
               <option value="right">По правому краю</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="options">
+          <div class="opt opt-wide">
+            <label for="text-scale">Размер текста</label>
+            <select id="text-scale">
+              <option value="1" selected>Обычный (×1)</option>
+              <option value="1.5">Крупный (×1.5)</option>
+              <option value="2">Очень крупный (×2)</option>
+              <option value="3">Максимум (×3)</option>
+            </select>
+          </div>
+          <div class="opt opt-wide">
+            <label for="print-size">Размер для печати</label>
+            <select id="print-size">
+              <option value="small" selected>Мелкий — ширина 4 см</option>
+              <option value="medium">Средний — ширина 10 см</option>
+              <option value="large">Крупный — ширина 20 см</option>
+              <option value="origin">Как есть — по формату</option>
             </select>
           </div>
         </div>
@@ -138,6 +166,8 @@
         <div class="result-meta">
           <div class="meta-row"><span class="meta-k">Формат:</span><span id="meta-format" class="meta-v">1:1 · 1080 × 1080</span></div>
           <div class="meta-row"><span class="meta-k">Компоновка:</span><span id="meta-layout" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">Печать:</span><span id="meta-print" class="meta-v">—</span></div>
+          <div class="meta-row"><span class="meta-k">Оригинал:</span><span id="meta-orig" class="meta-v">—</span></div>
           <div class="meta-row"><span class="meta-k">QR содержит:</span><span id="meta-qr" class="meta-v">—</span></div>
           <div class="meta-row"><span class="meta-k">Подпись:</span><span id="meta-caption" class="meta-v">—</span></div>
         </div>
