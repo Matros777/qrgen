@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://qrgen-five-mauve.vercel.app/sitemap.xml

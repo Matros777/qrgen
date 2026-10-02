@@ -321,7 +321,7 @@ h1 { font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.5p
   height: 340px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: transparent; /* прозрачное поле по умолчанию */
   display: grid;
   place-items: center;
   padding: 0;
@@ -460,6 +460,52 @@ h1 { font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.5p
   .footer-top { grid-template-columns: 1fr; gap: 20px; }
   .footer-bottom { flex-direction: column; align-items: flex-start; text-align: left; }
 }
+
+/* ===== SEO-БЛОК (H2 + шаги) ===== */
+.seo-block {
+  margin-top: 40px;
+  padding: 26px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.seo-block h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
+}
+.seo-steps {
+  list-style: none;
+  counter-reset: seo;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.seo-steps li {
+  counter-increment: seo;
+  position: relative;
+  padding-left: 40px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.seo-steps li::before {
+  content: counter(seo);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #04101f;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.seo-steps li strong { color: var(--text); }
 
 /* ============================================================
    СТРАНИЦА «ПОСТ С QR» (/post)

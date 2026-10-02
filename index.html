@@ -3,8 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Generator — генератор QR-кодов</title>
-  <meta name="description" content="Бесплатный генератор QR-кодов из ссылки или текста. Мгновенно, без регистрации." />
+  <title>QR Generator — генератор QR-кодов бесплатно, онлайн</title>
+  <meta name="description" content="Бесплатный генератор QR-кодов из ссылки или текста. Прозрачный фон, выбор цветов, скачивание PNG. Мгновенно, без регистрации." />
+  <meta name="keywords" content="qr код, генератор qr кода, создать qr код, qr code generator, qr код онлайн, бесплатный qr код" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://qrgen-five-mauve.vercel.app/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="QRGen" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:title" content="QR Generator — генератор QR-кодов бесплатно, онлайн" />
+  <meta property="og:description" content="Бесплатный генератор QR-кодов из ссылки или текста. Прозрачный фон, выбор цветов, скачивание PNG. Мгновенно, без регистрации." />
+  <meta property="og:url" content="https://qrgen-five-mauve.vercel.app/" />
+  <meta property="og:image" content="https://qrgen-five-mauve.vercel.app/apple-touch-icon.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="QR Generator — генератор QR-кодов бесплатно, онлайн" />
+  <meta name="twitter:description" content="Бесплатный генератор QR-кодов из ссылки или текста. Мгновенно, без регистрации." />
+  <meta name="twitter:image" content="https://qrgen-five-mauve.vercel.app/apple-touch-icon.png" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
@@ -68,6 +86,26 @@
           </div>
         </div>
 
+        <div class="options">
+          <div class="opt">
+            <label for="qr-dark">Цвет кода</label>
+            <input type="color" id="qr-dark" class="input input-color" value="#000000" />
+          </div>
+          <div class="opt">
+            <label for="qr-light">Цвет фона</label>
+            <input type="color" id="qr-light" class="input input-color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="options">
+          <div class="opt opt-check">
+            <label class="check-row" for="qr-transparent">
+              <input type="checkbox" id="qr-transparent" checked />
+              <span class="check-text">Прозрачный фон — поле без заливки</span>
+            </label>
+          </div>
+        </div>
+
         <div class="actions">
           <button id="gen-btn" class="btn btn-primary" type="button">Сгенерировать QR</button>
           <button id="dl-btn" class="btn btn-ghost" type="button" disabled>Скачать PNG</button>
@@ -82,7 +120,7 @@
           <div id="qr-ad" class="qr-ad">
             <!--[ 300x250 Ad Tag ( qrgen-five-mauve.vercel.app ) - Adz2You // adz2you.xyz // ]-->
             <div style="z-index:99999;position:fixed;bottom:10px;right:10px">
-            <a style="position:absolute;top:-30px;left:-30px" href="#" onclick="this.parentNode.style.display='none';"><img src="https://adz2you.xyz/imges/X.png" width="30" height="30" title="Close" /></a>
+            <a style="position:absolute;top:-30px;left:-30px" href="#" onclick="this.parentNode.style.display='none';"><img src="https://adz2you.xyz/imges/X.png" width="30" height="30" title="Close" alt="Закрыть рекламу" /></a>
             <iframe src="//ptpss.online/serve/show.php?a=1203&b=300x250" width="300" height="250" frameBorder="0" scrolling="no" marginwidth="0" marginheight="0"></iframe>
             </div>
             <!--[ End of the Ad Tag - Adz2You // adz2you.xyz // ]-->
@@ -97,6 +135,16 @@
         </div>
       </section>
     </main>
+
+    <!-- SEO-блок: структура H2 + полезный текст -->
+    <section class="seo-block">
+      <h2>Как создать QR-код: 3 простых шага</h2>
+      <ol class="seo-steps">
+        <li><strong>Вставь ссылку или текст</strong> в поле выше — например, адрес сайта, Wi-Fi пароль или любой текст.</li>
+        <li><strong>Настрой внешний вид:</strong> размер, уровень коррекции ошибок, цвет кода и фона. По умолчанию фон прозрачный — код легко встанет на любой дизайн.</li>
+        <li><strong>Сгенерируй и скачай PNG</strong> — готовый QR-код в высоком качестве, без регистрации и бесплатно.</li>
+      </ol>
+    </section>
 
     <!-- ФУТЕР -->
     <footer class="site-footer">

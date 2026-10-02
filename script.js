@@ -7,6 +7,9 @@
   const input    = $('qr-input');
   const sizeSel  = $('qr-size');
   const ecSel    = $('qr-ec');
+  const qrDark   = $('qr-dark');
+  const qrLight  = $('qr-light');
+  const qrTrans  = $('qr-transparent');
   const genBtn   = $('gen-btn');
   const dlBtn    = $('dl-btn');
   const hint     = $('hint');
@@ -66,6 +69,14 @@
     const size = parseInt(sizeSel.value, 10) || 320;
     const ec   = ecSel.value || 'M';
 
+    // Цвета: код (тёмный) и фон (светлый).
+    // Прозрачный фон по умолчанию: светлый слой рисуется с альфой 0 (#ffffff00),
+    // а поле .qr-box не заливается — страница просвечивает.
+    const transparent = qrTrans.checked;
+    const dark  = qrDark.value  || '#000000';
+    const light = transparent ? '#ffffff00' : (qrLight.value || '#ffffff');
+    qrBox.style.background = transparent ? 'transparent' : light;
+
     // Готовим canvas в скрытой обёртке
     qrWrap.innerHTML = '';
     const canvas = document.createElement('canvas');
@@ -79,7 +90,7 @@
           width: Math.min(size, 340 - 32), // вписываем в qr-box
           margin: 2,
           errorCorrectionLevel: ec,
-          color: { dark: '#000000', light: '#ffffff' }
+          color: { dark: dark, light: light }
         },
         (err) => {
           if (err) {
@@ -94,7 +105,8 @@
 
           metaType.textContent = detectType(value);
           metaCont.textContent = value;
-          metaSize.textContent = size + ' × ' + size + ' px · EC ' + ec;
+          metaSize.textContent = size + ' × ' + size + ' px · EC ' + ec +
+                                (transparent ? ' · фон прозрачный' : ' · фон ' + light);
 
           setHint('QR готов. Проверь содержимое справа.', 'ok');
         }
@@ -146,9 +158,18 @@
     }
   });
 
-  // Автогенерация при смене размера/коррекции, если QR уже есть
+  // Автогенерация при смене размера/коррекции/цветов, если QR уже есть
   sizeSel.addEventListener('change', () => { if (qrWrap.querySelector('canvas')) generate(); });
   ecSel.addEventListener('change',   () => { if (qrWrap.querySelector('canvas')) generate(); });
+  [qrDark, qrLight].forEach((el) => {
+    el.addEventListener('input',  () => { if (qrWrap.querySelector('canvas')) generate(); });
+    el.addEventListener('change', () => { if (qrWrap.querySelector('canvas')) generate(); });
+  });
+  qrTrans.addEventListener('change', () => {
+    // при включённой прозрачности поле не заливается
+    qrBox.style.background = qrTrans.checked ? 'transparent' : (qrLight.value || '#ffffff');
+    if (qrWrap.querySelector('canvas')) generate();
+  });
 
   // Год в подвале
   const yearEl = document.getElementById('year');
