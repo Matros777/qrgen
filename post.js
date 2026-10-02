@@ -190,7 +190,95 @@
     makeBtn.disabled = true;
     dlBtn.disabled = true;
 
-    // --- Раскладка: картинка → QR → текст ---
+    const natW = sourceImage.naturalWidth  || 1;
+    const natH = sourceImage.naturalHeight || 1;
+
+    /* ================================================================
+       РЕЖИМ «БЕЗ ПОЛЕЙ»
+       Картинка — во всю ширину холста, пропорции сохраняются.
+       QR — квадрат во всю ширину, строго под картинкой.
+       Текст — под QR.
+       Высота холста считается автоматически.
+       ================================================================ */
+    if (fit === 'full') {
+      const W        = fmt.w;                     // фиксированная ширина холста
+      const imgH     = Math.round(W * (natH / natW)); // высота картинки по её пропорциям
+      const qrSize   = W;                         // QR — квадрат во всю ширину
+      const gap1     = Math.round(W * 0.015);     // картинка → QR
+      const gap2     = capText ? Math.round(W * 0.022) : 0; // QR → текст
+      const sidePad  = Math.round(W * 0.045);     // боковые поля ТОЛЬКО у текста
+      const botPad   = capText ? 0 : Math.round(W * 0.02);
+      const maxTextW = W - sidePad * 2;
+
+      let fontSize = Math.round(W * 0.038);
+      let lines = [], lineH = 0, textH = 0;
+
+      // Подгоняем шрифт, чтобы картинка не уехала за разумный предел
+      for (let i = 0; i < 8; i++) {
+        ctx.font = '700 ' + fontSize + 'px "Segoe UI", system-ui, sans-serif';
+        lines  = capText ? wrapText(ctx, capText, maxTextW) : [];
+        lineH  = Math.round(fontSize * 1.32);
+        textH  = lines.length * lineH;
+        const total = imgH + gap1 + qrSize + gap2 + textH;
+        if (total <= 4000 || fontSize <= 14) break;
+        fontSize = Math.max(14, Math.round(fontSize * 0.92));
+      }
+
+      const totalH = imgH + gap1 + qrSize + gap2 + textH + botPad;
+
+      canvas.width  = W;
+      canvas.height = totalH;
+
+      // Фон — только заполнитель промежутков между блоками
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, totalH);
+
+      // Картинка — во всю ширину, без полей, пропорции сохранены
+      ctx.drawImage(sourceImage, 0, 0, W, imgH);
+
+      // QR — квадрат во всю ширину, строго под картинкой
+      const qrY = imgH + gap1;
+      try {
+        const qrCanvas = await renderQr(value || ' ', qrSize, dark, light);
+        ctx.drawImage(qrCanvas, 0, qrY, qrSize, qrSize);
+      } catch (e) {
+        makeBtn.disabled = false;
+        setHint('Ошибка генерации QR: ' + (e && e.message ? e.message : e), 'error');
+        return;
+      }
+
+      // Текст — под QR
+      if (capText) {
+        const textTop = qrY + qrSize + gap2;
+        ctx.fillStyle  = fg;
+        ctx.textBaseline = 'top';
+        ctx.textAlign  = align;
+        const tx = align === 'left' ? sidePad : align === 'right' ? W - sidePad : W / 2;
+        ctx.font = '700 ' + fontSize + 'px "Segoe UI", system-ui, sans-serif';
+        lines.forEach((line, i) => {
+          if (line) ctx.fillText(line, tx, textTop + i * lineH, maxTextW);
+        });
+      }
+
+      placeholder.style.display = 'none';
+      canvas.style.display = '';
+
+      metaFormat.textContent = currentFormat + ' · ' + W + ' × ' + totalH + ' px (без полей)';
+      metaLayout.textContent = 'Картинка ' + W + '×' + imgH + ' (пропорции сохранены)' +
+                               ' · QR ' + qrSize + '×' + qrSize +
+                               (lines.length ? ' · ' + lines.length + ' стр. подписи' : ' · без подписи');
+      metaQr.textContent  = value || '—';
+      metaCap.textContent = capText || '—';
+
+      dlBtn.disabled = false;
+      makeBtn.disabled = false;
+      setHint('Готово: картинка во всю ширину, QR квадратом под ней, текст внизу.', 'ok');
+      return;
+    }
+
+    /* ================================================================
+       ОБЫЧНЫЙ РЕЖИМ — холст фиксированного размера формата
+       ================================================================ */
     const pad     = Math.round(unit * 0.045);
     const qrSize  = Math.round(unit * 0.26);
     const qrPad   = Math.round(qrSize * 0.12);
