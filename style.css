@@ -545,6 +545,40 @@ h1 { font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.5p
   border: none;
   border-radius: 8px;
 }
+.input-color:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Переключатель «Подложка под картинкой» ---------- */
+.opt-check { display: flex; align-items: flex-end; }
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  width: 100%;
+  transition: border-color .18s, background .18s;
+}
+.check-row:hover { border-color: rgba(79,140,255,0.55); background: rgba(79,140,255,0.07); }
+.check-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  accent-color: #4f8cff;
+  cursor: pointer;
+  margin: 0;
+}
+.check-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 0;
+}
 
 /* ---------- Переключатель формата 16:9 / 9:16 / 1:1 ---------- */
 .segmented {

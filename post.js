@@ -18,6 +18,8 @@
   const fgInput    = $('fg');
   const qrDark     = $('qr-dark');
   const qrLight    = $('qr-light');
+  const padOn      = $('pad-on');
+  const padColor   = $('pad-color');
   const makeBtn    = $('make-btn');
   const dlBtn      = $('dl-btn');
   const hint       = $('hint');
@@ -325,6 +327,12 @@
     const imgW = W;
     const imgHReal = imgH;
 
+    // Подложка под картинкой — как «карточка», цвет выбирается
+    if (padOn.checked) {
+      ctx.fillStyle = padColor.value;
+      ctx.fillRect(imgX, imgY, imgW, imgHReal);
+    }
+
     if (fit === 'cover') {
       // Заполнить: обрезаем по меньшей стороне
       const scale = Math.max(imgW / sourceImage.naturalWidth, imgHReal / sourceImage.naturalHeight);
@@ -384,6 +392,7 @@
     metaFormat.textContent = currentFormat + ' · ' + W + ' × ' + H + ' px';
     metaLayout.textContent = 'Картинка ' + Math.round(imgW) + '×' + Math.round(imgHReal) +
                             ' · QR ' + qrSize + ' px' +
+                            (padOn.checked ? ' · подложка ' + padColor.value : '') +
                             (lines.length ? ' · ' + lines.length + ' стр. подписи' : ' · без подписи');
     metaQr.textContent = value || '—';
     metaCap.textContent = capText || '—';
@@ -458,9 +467,15 @@
     el._t = setTimeout(() => { if (sourceImage) render(); }, 350);
   }));
 
-  [fitSel, alignSel, bgInput, fgInput, qrDark, qrLight].forEach((el) => {
+  [fitSel, alignSel, bgInput, fgInput, qrDark, qrLight, padColor].forEach((el) => {
     el.addEventListener('input', () => { if (sourceImage) render(); });
     el.addEventListener('change', () => { if (sourceImage) render(); });
+  });
+
+  // Переключатель подложки: гасим поле цвета, когда подложка выключена
+  padOn.addEventListener('change', () => {
+    padColor.disabled = !padOn.checked;
+    if (sourceImage) render();
   });
 
   // ---------- Кнопки ----------
