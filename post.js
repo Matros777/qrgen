@@ -89,7 +89,7 @@
     fetch(clean, { mode: 'cors', cache: 'no-store' })
       .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
       .then((blob) => {
-        if (blob && /^image\//.test(blob.type)) throw new Error('not image');
+        if (blob && !/^image\//.test(blob.type)) throw new Error('not image');
         const finalUrl = URL.createObjectURL(blob);
         const img = new Image();
         img.onload = () => {
@@ -332,6 +332,7 @@ metaOrig.textContent   = natW + ' × ' + natH + ' px';
     /* ================================================================
        ОБЫЧНЫЙ РЕЖИМ — холст фиксированного размера формата
        ================================================================ */
+    const unit = Math.min(W, H);
     const pad     = Math.round(unit * 0.045);
     const qrSize  = Math.round(unit * 0.26);
     const qrPad   = Math.round(qrSize * 0.12);
